@@ -64,7 +64,7 @@ public final class UsersTest extends AbstractIntegrationTest {
 
         requestCreateUser(this.uaaClient, userName)
             .map(CreateUserResponse::getId)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .changePassword(ChangeUserPasswordRequest.builder()
                     .oldPassword("test-password")
                     .password("test-new-password")
@@ -111,12 +111,12 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .delete(DeleteUserRequest.builder()
                     .userId(userId)
                     .build()))
             .map(DeleteUserResponse::getId)
-            .then(userId -> requestListUsers(this.uaaClient, userId))
+            .flatMap(userId -> requestListUsers(this.uaaClient, userId))
             .map(ListUsersResponse::getTotalResults)
             .as(StepVerifier::create)
             .expectNext(0)
@@ -148,7 +148,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .getVerificationLink(GetUserVerificationLinkRequest.builder()
                     .redirectUri("test-redirect-uri")
                     .userId(userId)
@@ -183,7 +183,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .list(ListUsersRequest.builder()
                     .filter(String.format("id eq \"%s\"", userId))
                     .build()))
@@ -200,7 +200,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .lookup(LookupUserIdsRequest.builder()
                     .filter(String.format("id eq \"%s\"", userId))
                     .build()))
@@ -217,7 +217,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .update(UpdateUserRequest.builder()
                     .email(Email.builder()
                         .value("test-email-2")
@@ -256,7 +256,7 @@ public final class UsersTest extends AbstractIntegrationTest {
         String userName = this.nameFactory.getUserName();
 
         createUserId(this.uaaClient, userName)
-            .then(userId -> this.uaaClient.users()
+            .flatMap(userId -> this.uaaClient.users()
                 .verify(VerifyUserRequest.builder()
                     .userId(userId)
                     .build()))
